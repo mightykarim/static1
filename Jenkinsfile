@@ -1,41 +1,37 @@
 pipeline {
     agent any
 
-    // Define environment variables (available in all stages)
+    // Environment variables available to all stages
     environment {
-        APP_VERSION = "1.0.5"
-        DEPLOY_ENV = "production"
+        VERSION = "1.0.5"
+        APP_NAME = "StaticApp"
     }
 
-    // Define build tools (Maven in this case)
+    // Tools installation (Maven name must match Jenkins Global Tools)
     tools {
-        maven "Maven_3.9"   // this name must match the Maven installation name in Jenkins
+        maven "Maven_3.9"   // must match the name configured in Jenkins → Tools
     }
 
     stages {
 
         stage('Build') {
             steps {
-                echo "Building application version: ${APP_VERSION}"
-                echo "Environment: ${DEPLOY_ENV}"
-
-                // Using Maven installed via tools{}
-                sh "mvn --version"
-                sh "mvn clean install"
+                echo "Building version: ${VERSION} for app: ${APP_NAME}"
+                sh 'mvn -version'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Testing..'
-                // test commands here...
+                echo 'Running tests...'
+                // Example: sh 'mvn test'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying version ${APP_VERSION} to ${DEPLOY_ENV}"
-                // deployment commands...
+                echo "Deploying version: ${VERSION}"
+                // Example deploy steps
             }
         }
     }
