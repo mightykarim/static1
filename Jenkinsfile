@@ -3,11 +3,11 @@ pipeline {
 
     environment {
         JAVA_VERSION = '21'
-        MAVEN_VERSION = '3.9.2'
+        RUN_TESTS = 'true'
     }
 
     tools {
-        maven 'Maven 3.9.2'
+        maven 'Maven_3.9'  // <-- use the exact Maven name from Jenkins
     }
 
     parameters {
@@ -17,8 +17,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "Building with Java ${env.JAVA_VERSION} and Maven ${env.MAVEN_VERSION}"
-                sh 'mvn -version'   // Use 'bat' on Windows
+                echo "Building with Maven ${env.MAVEN_HOME}"
+                sh 'mvn -version'  // bat 'mvn -version' on Windows
             }
         }
 
