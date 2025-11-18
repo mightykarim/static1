@@ -1,52 +1,37 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_VERSION = '21'
-        RUN_TESTS = 'true'
-    }
-
-    tools {
-        maven 'Maven_3.9'  // <-- use the exact Maven name from Jenkins
-    }
-
     parameters {
-        booleanParam(name: 'executeTests', defaultValue: true, description: 'Run the Test stage?')
+        string(name: 'APP_ENV', defaultValue: 'dev', description: 'Application environment')
+        choice(name: 'BUILD_TYPE', choices: ['Debug', 'Release'], description: 'Build Type')
+        booleanParam(name: 'EXECUTE_TESTS', defaultValue: true, description: 'Run Test Stage?')
     }
 
     stages {
+
         stage('Build') {
             steps {
-                echo "Building with Maven ${env.MAVEN_HOME}"
-                sh 'mvn -version'  // bat 'mvn -version' on Windows
+                echo "Building the project..."
+                echo "Environment: ${params.APP_ENV}"
+                echo "Build Type: ${params.BUILD_TYPE}"
             }
         }
 
         stage('Test') {
             when {
-                expression { params.executeTests }
+                expression { return params.EXECUTE_TESTS == true }
             }
             steps {
                 echo 'Running tests...'
+                // Add test commands here
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying project...'
+                echo "Deploying application..."
+                // Add deployment commands here
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Post build actions running'
-        }
-        success {
-            echo 'Build succeeded!'
-        }
-        failure {
-            echo 'Build failed!'
         }
     }
 }
