@@ -1,53 +1,52 @@
 pipeline {
     agent any
 
-    // Environment variables available to all stages
     environment {
-        VERSION = "1.0.5"
-        APP_NAME = "StaticApp"
+        JAVA_VERSION = '21'
+        MAVEN_VERSION = '3.9.2'
     }
 
-    // Tools installation (Maven name must match Jenkins Global Tools)
     tools {
-        maven "Maven_3.9"   // must match the name configured in Jenkins → Tools
+        maven 'Maven 3.9.2'
+    }
+
+    parameters {
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'Run the Test stage?')
     }
 
     stages {
-
         stage('Build') {
             steps {
-                echo "Building version: ${VERSION} for app: ${APP_NAME}"
-                sh 'mvn -version'
+                echo "Building with Java ${env.JAVA_VERSION} and Maven ${env.MAVEN_VERSION}"
+                sh 'mvn -version'   // Use 'bat' on Windows
             }
         }
 
         stage('Test') {
+            when {
+                expression { params.executeTests }
+            }
             steps {
                 echo 'Running tests...'
-                // Example: sh 'mvn test'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying version: ${VERSION}"
-                // Example deploy steps
+                echo 'Deploying project...'
             }
         }
     }
 
     post {
         always {
-            echo 'Post build condition running'
+            echo 'Post build actions running'
         }
         success {
-            echo 'This runs only if the build succeeded'
+            echo 'Build succeeded!'
         }
         failure {
-            echo 'Post action if build failed'
-        }
-        unstable {
-            echo 'This runs if the build is unstable'
+            echo 'Build failed!'
         }
     }
 }
